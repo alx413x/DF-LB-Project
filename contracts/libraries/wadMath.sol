@@ -2,11 +2,11 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title wadMath
+ * @title WadMath
  * @notice Fixed-point arithmetic library using WAD (1e18) precision.
  * @dev All functions are internal pure — they get inlined by the compiler.
  */
-library wadMath {
+library WadMath {
     uint256 internal constant WAD = 1e18;
     uint256 internal constant HALF_WAD = 0.5e18;
     uint256 internal constant SECONDS_PER_YEAR = 365 days;

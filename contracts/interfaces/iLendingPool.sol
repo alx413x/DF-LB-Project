@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title iLendingPool
+ * @title ILendingPool
  * @notice interface for the core lending pool contract.
  */
-interface iLendingPool {
+interface ILendingPool {
     // ──────────────────── Core Actions ────────────────────
 
     function deposit(address asset, uint256 amount) external;

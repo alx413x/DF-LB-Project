@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title iInterestRateModel
+ * @title IInterestRateModel
  * @notice interface for pluggable interest rate strategies.
 */
-interface iInterestRateModel {
+interface IInterestRateModel {
   /**
    * @notice returns the annualized borrow rate in WAD (1e18 = 100%)
    * @param totalDeposits total deposits in the pool (native token units)
