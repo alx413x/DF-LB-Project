@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Wallet, Activity, CircleDot, Loader2 } from "lucide-react";
-// import { useLendingContext } from "../context/useLendingContext";
-// import { formatUSD, truncateAddress } from "../utils/formatters";
+import { useLendingContext } from "../context/useLendingContext";
+import { formatUSD, truncateAddress } from "../utils/formatters";
 
 const TABS = [
   { id: "dashboard", label: "Dashboard" },
