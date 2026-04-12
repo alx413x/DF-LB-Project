@@ -20,8 +20,8 @@ contract InterestRateModel is IInterestRateModel {
     uint256 public constant BASE_RATE = 0.02e18;              // 2%
     uint256 public constant SLOPE_1 = 0.04e18;                // 4%
     uint256 public constant SLOPE_2 = 0.75e18;                // 75%
-    uint256 public constant OPTIMAL_UTILIZATION = 0.80e18;    // 80%
-    uint256 public constant MAX_EXCESS_UTILIZATION = 0.20e18; // 1 - 80% = 20%
+    uint256 public constant OPTIMAL_UTILIZATION = 0.90e18;    // 90%
+    uint256 public constant MAX_EXCESS_UTILIZATION = 0.10e18; // 1 - 90% = 10%
 
     /// @inheritdoc IInterestRateModel
     function getBorrowRate(
@@ -29,7 +29,7 @@ contract InterestRateModel is IInterestRateModel {
         uint256 totalBorrows
     ) external pure override returns (uint256) {
         if (totalDeposits == 0) return BASE_RATE;
-
+        // LTV
         uint256 utilization = totalBorrows.wadDiv(totalDeposits);
 
         if (utilization <= OPTIMAL_UTILIZATION) {
