@@ -53,6 +53,7 @@ export default function ActionModal({ isOpen, onClose, actionType, asset }) {
   }, [amount, actionType, asset.symbol, simulateHealthFactor, healthFactor]);
 
   const isRisky = newHF !== Infinity && newHF < 1.1;
+  const wouldBeLiquidatable = newHF !== Infinity && newHF < 1.0;
   const exceedsMax = parseFloat(amount) > maxAmount;
   const isValid = amount && parseFloat(amount) > 0 && !exceedsMax && isConnected;
 
@@ -213,13 +214,41 @@ export default function ActionModal({ isOpen, onClose, actionType, asset }) {
               {getHFDisplay(newHF)}
             </span>
           </div>
-          {isRisky && (
-            <p className="text-xs text-danger mt-2 flex items-center gap-1">
+          {isRisky && !wouldBeLiquidatable &&(
+            <p className="text-xs text-warning mt-2 flex items-center gap-1">
               <AlertTriangle className="w-3 h-3" />
               Warning: This action will put your position at liquidation risk.
             </p>
           )}
         </div>
+
+        {/* Liquidation Warning - shown when HF < 1 */}
+        {wouldBeLiquidatable && (
+          <div className="bg-danger/20 border border-danger/40 rounded-xl p-4 mb-6">
+            <div className="flex items-center gap-2 text-danger font-semibold mb-2">
+              <AlertTriangle className="w-5 h-5" />
+              Position Will Be Liquidatable
+            </div>
+            <p className="text-xs text-text-secondary mb-3">
+              This borrow will make your Health Factor drop below 1.0, allowing liquidators to seize your collateral.
+            </p>
+            <div className="bg-gray-900/50 rounded-lg p-3 space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-text-secondary">Health Factor after:</span>
+                <span className="font-mono text-danger font-bold">{getHFDisplay(newHF)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-text-secondary">Liquidation threshold:</span>
+                <span className="font-mono">1.0</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-text-secondary">Close factor:</span>
+                <span className="font-mono">50% of debt</span>
+              </div>
+            </div>
+          </div>
+        )}
+
 
         {/* Approve Button (for deposit/repay when approval needed) */}
         {needsApproval ? (

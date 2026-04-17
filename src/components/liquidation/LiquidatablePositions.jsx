@@ -10,7 +10,7 @@ const TOKEN_ICONS = {
 };
 
 export default function LiquidatablePositions() {
-  const { liquidatablePositions, assets, refreshData } = useLendingContext();
+  const { liquidatablePositions, assets, refreshData, walletAddress } = useLendingContext();
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -26,8 +26,11 @@ export default function LiquidatablePositions() {
     }
   };
 
+  // Filter out user's own position (cannot self-liquidate)
   // Already sorted by HF ascending from contractService
-  const sorted = liquidatablePositions || [];
+  const sorted = (liquidatablePositions || []).filter(
+    (p) => p.address.toLowerCase() !== walletAddress.toLowerCase()
+  );
 
   return (
     <div className="bg-gray-900/70 backdrop-blur-lg border border-white/10 rounded-2xl overflow-hidden">

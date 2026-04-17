@@ -240,16 +240,16 @@ export default function useLending() {
     [enrichedAssets, healthFactor]
   );
 
+  // Calculate max borrow - only limited by pool liquidity, not by LTV/collateral
+  // This allows users to borrow into liquidation territory
   const calculateMaxBorrow = useCallback(
     (symbol) => {
       const asset = enrichedAssets.find((a) => a.symbol === symbol);
       if (!asset) return 0;
       const availableLiquidity = asset.totalSupply - asset.totalBorrow;
-      const remainingBorrowPower = Math.max(0, borrowLimitUSD - totalDebtUSD);
-      const maxFromLTV = remainingBorrowPower / asset.price;
-      return Math.max(0, Math.min(availableLiquidity, maxFromLTV));
+      return Math.max(0, availableLiquidity);
     },
-    [enrichedAssets, borrowLimitUSD, totalDebtUSD]
+    [enrichedAssets]
   );
 
   // ──────────────────── Transaction Logging ────────────────────

@@ -3,8 +3,11 @@ const fs = require("fs");
 const path = require("path");
 
 async function main() {
-  const [deployer] = await hre.ethers.getSigners();
+  const [deployer, account1] = await hre.ethers.getSigners();
   console.log("Deploying contracts with:", deployer.address);
+  if (account1) {
+    console.log("Secondary account (account1):", account1.address);
+  }
 
   // 1. Deploy MockERC20 tokens
   const MockERC20 = await hre.ethers.getContractFactory("MockERC20");
@@ -58,10 +61,26 @@ async function main() {
   await weth.mint(deployer.address, wethAmount);
   console.log("Minted 1,000,000 USDC and 1,000 WETH to deployer");
 
+  // Mint test tokens to account1 (for demo/testing)
+  if (account1) {
+    const usdcAmount1 = hre.ethers.parseUnits("1000000", 6); // 1M USDC
+    const wethAmount1 = hre.ethers.parseEther("1000");       // 1000 WETH
+    await usdc.mint(account1.address, usdcAmount1);
+    await weth.mint(account1.address, wethAmount1);
+    console.log("Minted 1,000,000 USDC and 1,000 WETH to account1");
+  }
+
   // 7. Approve LendingPool to spend tokens
   await usdc.approve(await pool.getAddress(), hre.ethers.MaxUint256);
   await weth.approve(await pool.getAddress(), hre.ethers.MaxUint256);
   console.log("Approved LendingPool to spend deployer tokens");
+
+  // Deposit initial liquidity to LendingPool (so pool is not empty)
+  const initialUsdcDeposit = hre.ethers.parseUnits("500000", 6); // 500K USDC
+  const initialWethDeposit = hre.ethers.parseEther("200");     // 200 WETH
+  await pool.deposit(await usdc.getAddress(), initialUsdcDeposit);
+  await pool.deposit(await weth.getAddress(), initialWethDeposit);
+  console.log("Deposited 500,000 USDC and 200 WETH as initial liquidity");
 
   // 8. Write addresses to JSON for frontend consumption
   const addresses = {
@@ -71,6 +90,7 @@ async function main() {
     InterestRateModel: await rateModel.getAddress(),
     LendingPool: await pool.getAddress(),
     deployer: deployer.address,
+    account1: account1 ? account1.address : null,
     network: hre.network.name,
   };
 
