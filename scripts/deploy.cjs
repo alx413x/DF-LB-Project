@@ -63,11 +63,11 @@ async function main() {
 
   // Mint test tokens to account1 (for demo/testing)
   if (account1) {
-    const usdcAmount1 = hre.ethers.parseUnits("1000000", 6); // 1M USDC
-    const wethAmount1 = hre.ethers.parseEther("1000");       // 1000 WETH
+    const usdcAmount1 = hre.ethers.parseUnits("100000", 6); // 100K USDC
+    const wethAmount1 = hre.ethers.parseEther("100");       // 100 WETH
     await usdc.mint(account1.address, usdcAmount1);
     await weth.mint(account1.address, wethAmount1);
-    console.log("Minted 1,000,000 USDC and 1,000 WETH to account1");
+    console.log("Minted 100,000 USDC and 100 WETH to account1");
   }
 
   // 7. Approve LendingPool to spend tokens

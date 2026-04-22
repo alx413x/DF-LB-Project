@@ -7,10 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "compile": "hardhat --config hardhat.config.cjs compile",
-    "test": "hardhat test --config hardhat.config.cjs",
-    "deploy": "hardhat run scripts/deploy.cjs --config hardhat.config.cjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "ethers": "^6.16.0",

@@ -1,16 +1,78 @@
-# React + Vite
+# DeFi Lending Protocol
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Prerequisites
 
-Currently, two official plugins are available:
+- Node.js >= 18
+- npm >= 9
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Install Dependencies
 
-## React Compiler
+```bash
+npm install
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Smart Contracts
 
-## Expanding the ESLint configuration
+The smart contract system consists of **8 Solidity files** organized in a modular architecture:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+contracts/
+├── LendingPool.sol        # Core: deposit, withdraw, borrow, repay, liquidate
+├── InterestRateModel.sol  # Kinked interest rate model (2% base, 80% optimal utilization)
+├── PriceOracle.sol        # Price feed for USD valuation
+├── MockERC20.sol          # Test tokens (USDC, WETH)
+├── interfaces/
+│   ├── ILendingPool.sol
+│   ├── IInterestRateModel.sol
+│   └── IPriceOracle.sol
+└── libraries/
+    └── WadMath.sol        # Fixed-point arithmetic (WAD = 1e18)
+```
+
+### Key Components
+
+| Contract | Purpose |
+|----------|---------|
+| **LendingPool** | Core lending operations, interest accrual, health factor calculation, liquidation |
+| **InterestRateModel** | Kinked rate model: 2% base + 4%/75% slopes at 80% utilization kink |
+| **PriceOracle** | Manages asset prices in WAD format (USDC=$1, WETH=$2450) |
+| **WadMath** | Fixed-point math library for precise interest calculations |
+
+### Risk Parameters
+
+| Asset | LTV | Liquidation Threshold | Liquidation Bonus |
+|-------|-----|----------------------|-------------------|
+| USDC | 80% | 85% | 5% |
+| WETH | 75% | 82% | 10% |
+
+## Manual Test Procedure
+
+### Compile Contracts
+
+```bash
+npx hardhat --config hardhat.config.cjs compile
+```
+
+### Deploy Contracts (Local)
+
+Start a local Hardhat node in one terminal:
+
+```bash
+npx hardhat --config hardhat.config.cjs node
+```
+
+Deploy contracts in another terminal:
+
+```bash
+npx hardhat run scripts/deploy.cjs 
+```
+
+The deploy script will output all contract addresses and write them to `src/contracts/addresses.json` for frontend use.
+
+## Frontend
+
+### Start Development Server
+
+```bash
+npm run dev
+```
